@@ -1,22 +1,66 @@
+/**
+ * @todo
+ * known issues:
+ * - getItems needs to await loadListFromDisk()
+ */
+
+// class Item_ { 
+//   public title: string
+//   constructor(title: string) {
+//     this.title = title
+//   }
+// }
+
 class Item {
-    constructor(public item:string) {}
+    constructor(public title: string) { }
 }
 
 class TodoList {
-    private itens: Item[] = [];
-    constructor(public filePath: string) { }
+    private items: Item[] = []
+    private filePath: string
 
-    addItem(item: Item) {
-        this.itens.push(item)
+    constructor(filePath: string) {
+        this.filePath = filePath
+        this.loadListFromDisk()
     }
 
-    removeItem(index: number) {
-        this.itens.splice(index, 1);
+    private async saveListToDisk() {
+        const file = Bun.file(this.filePath)
+        const data = JSON.stringify(this.items)
+        await file.write(data)
     }
-    
-    getItens() {
-        return this.itens
+
+    private async loadListFromDisk() {
+        const file = Bun.file(this.filePath)
+        // const text = await file.text()
+        // const data = JSON.parse(text)
+        const data = await file.json();
+        this.items = data.map((v: any) => new Item(v.title))
+    }
+
+    /**
+     * Função que adiciona um novo item a lista
+     */
+    async addItem(item: Item) {
+        this.items.push(item)
+        await this.saveListToDisk()
+    }
+
+    /**
+     * Remove item da lista por um indice
+     */
+    async removeItem(index: number) {
+        this.items.splice(index, 1)
+        await this.saveListToDisk()
+    }
+
+    /**
+     * Retorna a cópia da lista de itens
+     */
+    getItems() {
+        return Array.from(this.items)
     }
 }
 
-const zika = new TodoList("arquivo.txt")
+export default TodoList
+export { Item, TodoList }
