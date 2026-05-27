@@ -10,6 +10,28 @@ const params = process.argv
 const command = params[2]
 
 // ------------------------------------------------------------------------------
+// --- Comando update
+// ------------------------------------------------------------------------------
+
+if (command === "update") {
+    const indexStr = params[3]
+    if (!indexStr) {
+        console.error("Índice do item é obrigatório")
+        process.exit(1)
+    }
+    const index = parseInt(indexStr)
+    const newItem = params[4]
+    if (!newItem) {
+        console.error("Valor do item é obrigatório")
+        process.exit(1)
+    }
+    await todolist.updateItem(index, new Item(newItem))
+
+    console.log(`item do índice '${index}' modificado para "${newItem}"`);
+    process.exit(0)
+}
+
+// ------------------------------------------------------------------------------
 // --- Comando List
 // ------------------------------------------------------------------------------
 
@@ -83,4 +105,5 @@ console.log(`Comandos disponíveis:
 - add <item>: Adiciona um item à lista
 - remove <index>: Remove um item da lista por indice
 - list: Lista os itens atuais
+- update <index> <new item>: Modifica um item da lista pelo índice dele
 `)

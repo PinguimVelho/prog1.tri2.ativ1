@@ -68,6 +68,14 @@ class TodoList {
     const items = await this.items
     return Array.from(items)
   }
+  /**
+   * muda o conteúdo de um item da lista
+   */
+  async updateItem(index:number, item: Item) {
+    const items = await this.items
+    items[index] = item
+    await this.saveListToDisk()
+  }
 }
 
 export default TodoList
